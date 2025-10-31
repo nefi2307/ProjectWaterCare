@@ -29,7 +29,7 @@
     
     // Set defaults UI
     self.datePicker.dateValue = [NSDate date];
-    self.lblMensaje.stringValue = @"Bienvenido. Registra tu consumo diario de agua.";
+    self.lblMensaje.stringValue = @"Bienvenido. Registra tu consumo.";
     
     // Mostrar datos iniciales
     [self mostrarUltimaSemana];
