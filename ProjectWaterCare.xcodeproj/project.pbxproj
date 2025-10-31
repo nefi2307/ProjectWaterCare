@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 77;
+	objectVersion = 70;
 	objects = {
 
 /* Begin PBXFileReference section */
@@ -11,11 +11,7 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		C701DAE22EB51CBE0009651F /* ProjectWaterCare */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = ProjectWaterCare;
-			sourceTree = "<group>";
-		};
+		C701DAE22EB51CBE0009651F /* ProjectWaterCare */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = ProjectWaterCare; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -85,6 +81,7 @@
 				};
 			};
 			buildConfigurationList = C701DADB2EB51CBE0009651F /* Build configuration list for PBXProject "ProjectWaterCare" */;
+			compatibilityVersion = "Xcode 13.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -93,7 +90,6 @@
 			);
 			mainGroup = C701DAD72EB51CBD0009651F;
 			minimizedProjectReferenceProxies = 1;
-			preferredProjectObjectVersion = 77;
 			productRefGroup = C701DAE12EB51CBE0009651F /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
