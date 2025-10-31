@@ -1,7 +1,8 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="11134" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="B8D-0N-5wS">
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="24128" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="B8D-0N-5wS">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="11134"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="24128"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
         <!--Application-->
@@ -673,7 +674,7 @@
                         <outlet property="delegate" destination="Voe-Tx-rLC" id="PrD-fu-P6m"/>
                     </connections>
                 </application>
-                <customObject id="Voe-Tx-rLC" customClass="AppDelegate" customModuleProvider=""/>
+                <customObject id="Voe-Tx-rLC" customClass="AppDelegate"/>
                 <customObject id="YLy-65-1bz" customClass="NSFontManager"/>
                 <customObject id="Ady-hI-5gd" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
@@ -703,10 +704,127 @@
         <!--View Controller-->
         <scene sceneID="hIz-AP-VOD">
             <objects>
-                <viewController id="XfG-lQ-9wD" customClass="ViewController" customModuleProvider="" sceneMemberID="viewController">
+                <viewController id="XfG-lQ-9wD" customClass="ViewController" sceneMemberID="viewController">
                     <view key="view" id="m2S-Jp-Qdl">
                         <rect key="frame" x="0.0" y="0.0" width="480" height="270"/>
                         <autoresizingMask key="autoresizingMask"/>
+                        <subviews>
+                            <customView ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="GQA-MD-snd">
+                                <rect key="frame" x="0.0" y="0.0" width="205" height="270"/>
+                                <subviews>
+                                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="VoJ-Wz-AnA">
+                                        <rect key="frame" x="20" y="83" width="153" height="24"/>
+                                        <buttonCell key="cell" type="push" title="Ver mes" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Rrl-c1-kFp">
+                                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                            <font key="font" metaFont="system"/>
+                                        </buttonCell>
+                                    </button>
+                                    <datePicker verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Th5-E2-Xzp">
+                                        <rect key="frame" x="20" y="204" width="156" height="26"/>
+                                        <datePickerCell key="cell" borderStyle="bezel" alignment="left" useCurrentDate="YES" id="la5-sE-rPk">
+                                            <font key="font" metaFont="system"/>
+                                            <date key="date" timeIntervalSinceReferenceDate="783625102.99893296">
+                                                <!--2025-10-31 17:38:22 +0000-->
+                                            </date>
+                                            <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                        </datePickerCell>
+                                    </datePicker>
+                                    <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="mMb-gO-uZt">
+                                        <rect key="frame" x="18" y="242" width="123" height="16"/>
+                                        <textFieldCell key="cell" lineBreakMode="clipping" title="Registrar consumo" id="sFT-op-5dN">
+                                            <font key="font" metaFont="systemSemibold" size="13"/>
+                                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                        </textFieldCell>
+                                    </textField>
+                                    <textField focusRingType="none" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="EMx-il-nZ7">
+                                        <rect key="frame" x="20" y="172" width="153" height="24"/>
+                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" borderStyle="bezel" placeholderString="Litros (L)" drawsBackground="YES" id="gTm-Rc-cbA">
+                                            <font key="font" metaFont="system"/>
+                                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                        </textFieldCell>
+                                    </textField>
+                                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="gkB-yb-7bk">
+                                        <rect key="frame" x="20" y="53" width="153" height="24"/>
+                                        <buttonCell key="cell" type="push" title="Limpiar datos" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="lOV-RF-ayB">
+                                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                            <font key="font" metaFont="system"/>
+                                        </buttonCell>
+                                    </button>
+                                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="o1K-0u-Y2a">
+                                        <rect key="frame" x="20" y="142" width="153" height="24"/>
+                                        <buttonCell key="cell" type="push" title="Registrar" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="AFH-gL-2ef">
+                                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                            <font key="font" metaFont="system"/>
+                                        </buttonCell>
+                                    </button>
+                                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="JQY-c6-1nk">
+                                        <rect key="frame" x="20" y="112" width="153" height="24"/>
+                                        <buttonCell key="cell" type="push" title="Ver semana" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="yOP-cV-V0m">
+                                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                            <font key="font" metaFont="system"/>
+                                        </buttonCell>
+                                    </button>
+                                    <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="43V-JD-0pT">
+                                        <rect key="frame" x="31" y="20" width="144" height="16"/>
+                                        <textFieldCell key="cell" lineBreakMode="clipping" title="ALERTA DE CONSUMO" id="cQF-Mn-E1P">
+                                            <font key="font" metaFont="system"/>
+                                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                        </textFieldCell>
+                                    </textField>
+                                </subviews>
+                                <constraints>
+                                    <constraint firstItem="VoJ-Wz-AnA" firstAttribute="top" secondItem="JQY-c6-1nk" secondAttribute="bottom" constant="5" id="4jB-DS-gaO"/>
+                                    <constraint firstItem="EMx-il-nZ7" firstAttribute="trailing" secondItem="o1K-0u-Y2a" secondAttribute="trailing" id="5v8-vg-Zpr"/>
+                                    <constraint firstItem="gkB-yb-7bk" firstAttribute="trailing" secondItem="43V-JD-0pT" secondAttribute="trailing" id="8Gr-HC-QZw"/>
+                                    <constraint firstItem="mMb-gO-uZt" firstAttribute="leading" secondItem="Th5-E2-Xzp" secondAttribute="leading" id="9MC-kB-de2"/>
+                                    <constraint firstItem="VoJ-Wz-AnA" firstAttribute="trailing" secondItem="gkB-yb-7bk" secondAttribute="trailing" id="C82-dZ-Cae"/>
+                                    <constraint firstItem="JQY-c6-1nk" firstAttribute="leading" secondItem="VoJ-Wz-AnA" secondAttribute="leading" id="Guv-UD-hXg"/>
+                                    <constraint firstItem="mMb-gO-uZt" firstAttribute="leading" secondItem="GQA-MD-snd" secondAttribute="leading" constant="20" symbolic="YES" id="IXf-hO-YpI"/>
+                                    <constraint firstItem="EMx-il-nZ7" firstAttribute="top" secondItem="Th5-E2-Xzp" secondAttribute="bottom" constant="8" symbolic="YES" id="TqI-vp-s3m"/>
+                                    <constraint firstItem="EMx-il-nZ7" firstAttribute="leading" secondItem="o1K-0u-Y2a" secondAttribute="leading" id="TrM-cF-GiD"/>
+                                    <constraint firstItem="JQY-c6-1nk" firstAttribute="top" secondItem="o1K-0u-Y2a" secondAttribute="bottom" constant="6" id="XWA-xJ-Rcz"/>
+                                    <constraint firstItem="43V-JD-0pT" firstAttribute="leading" secondItem="GQA-MD-snd" secondAttribute="leading" constant="33" id="YJK-vz-6nT"/>
+                                    <constraint firstAttribute="bottom" secondItem="43V-JD-0pT" secondAttribute="bottom" constant="20" symbolic="YES" id="aXe-Vr-PmJ"/>
+                                    <constraint firstItem="43V-JD-0pT" firstAttribute="centerX" secondItem="GQA-MD-snd" secondAttribute="centerX" id="ahw-Lf-6Jk"/>
+                                    <constraint firstItem="VoJ-Wz-AnA" firstAttribute="leading" secondItem="gkB-yb-7bk" secondAttribute="leading" id="aqf-jd-kUq"/>
+                                    <constraint firstItem="JQY-c6-1nk" firstAttribute="trailing" secondItem="VoJ-Wz-AnA" secondAttribute="trailing" id="ben-oO-E49"/>
+                                    <constraint firstItem="o1K-0u-Y2a" firstAttribute="trailing" secondItem="JQY-c6-1nk" secondAttribute="trailing" id="c60-Ni-A82"/>
+                                    <constraint firstItem="Th5-E2-Xzp" firstAttribute="top" secondItem="mMb-gO-uZt" secondAttribute="bottom" constant="16" id="hym-hh-FW0"/>
+                                    <constraint firstItem="o1K-0u-Y2a" firstAttribute="top" secondItem="EMx-il-nZ7" secondAttribute="bottom" constant="6" id="iyN-lQ-AWn"/>
+                                    <constraint firstItem="o1K-0u-Y2a" firstAttribute="leading" secondItem="JQY-c6-1nk" secondAttribute="leading" id="jpf-Xl-8O1"/>
+                                    <constraint firstItem="Th5-E2-Xzp" firstAttribute="trailing" secondItem="EMx-il-nZ7" secondAttribute="trailing" id="n2e-Yu-vaJ"/>
+                                    <constraint firstItem="gkB-yb-7bk" firstAttribute="top" secondItem="VoJ-Wz-AnA" secondAttribute="bottom" constant="6" id="nSF-1T-XQs"/>
+                                    <constraint firstItem="43V-JD-0pT" firstAttribute="top" secondItem="gkB-yb-7bk" secondAttribute="bottom" constant="17" id="ngJ-ma-ImU"/>
+                                    <constraint firstItem="Th5-E2-Xzp" firstAttribute="leading" secondItem="EMx-il-nZ7" secondAttribute="leading" id="qXj-8u-ifV"/>
+                                </constraints>
+                            </customView>
+                            <customView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="TZE-tY-kYI" customClass="ChartView">
+                                <rect key="frame" x="213" y="51" width="267" height="219"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                            </customView>
+                            <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="JA2-Lr-Ade">
+                                <rect key="frame" x="222" y="27" width="174" height="16"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <textFieldCell key="cell" lineBreakMode="clipping" title="Total ultimos 7 dias: 950.0 L" id="cVU-i2-YBh">
+                                    <font key="font" usesAppearanceFont="YES"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                            <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Jst-ll-Kzl">
+                                <rect key="frame" x="224" y="9" width="150" height="16"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <textFieldCell key="cell" lineBreakMode="clipping" title="Promedio diario: 135.7 L" id="jh4-1e-jfj">
+                                    <font key="font" metaFont="system"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                        </subviews>
                     </view>
                 </viewController>
                 <customObject id="rPt-NT-nkU" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
