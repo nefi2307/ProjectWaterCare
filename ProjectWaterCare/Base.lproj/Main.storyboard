@@ -685,7 +685,7 @@
         <scene sceneID="R2V-B0-nI4">
             <objects>
                 <windowController id="B8D-0N-5wS" sceneMemberID="viewController">
-                    <window key="window" title="Window" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" animationBehavior="default" id="IQv-IB-iLA">
+                    <window key="window" title="CuidAgua" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" animationBehavior="default" id="IQv-IB-iLA">
                         <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
                         <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
                         <rect key="contentRect" x="196" y="240" width="480" height="270"/>
@@ -730,8 +730,8 @@
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                         <datePickerCell key="cell" borderStyle="bezel" alignment="left" useCurrentDate="YES" id="la5-sE-rPk">
                                             <font key="font" metaFont="system"/>
-                                            <date key="date" timeIntervalSinceReferenceDate="783817380.24418902">
-                                                <!--2025-11-02 23:03:00 +0000-->
+                                            <date key="date" timeIntervalSinceReferenceDate="783831675.59864104">
+                                                <!--2025-11-03 03:01:15 +0000-->
                                             </date>
                                             <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
                                             <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -750,6 +750,9 @@
                                         <rect key="frame" x="20" y="184" width="153" height="24"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" borderStyle="bezel" placeholderString="Litros (L)" drawsBackground="YES" id="gTm-Rc-cbA">
+                                            <numberFormatter key="formatter" formatterBehavior="default10_4" numberStyle="decimal" formatWidth="-1" minimumIntegerDigits="1" maximumIntegerDigits="2000000000" maximumFractionDigits="3" id="ZQ1-g9-sTB">
+                                                <real key="minimum" value="1"/>
+                                            </numberFormatter>
                                             <font key="font" metaFont="system"/>
                                             <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -799,13 +802,11 @@
                                     </textField>
                                 </subviews>
                             </customView>
-                            <customView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="TZE-tY-kYI" customClass="ChartView">
+                            <customView ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="TZE-tY-kYI" customClass="ChartView">
                                 <rect key="frame" x="194" y="50" width="286" height="220"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                             </customView>
-                            <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="JA2-Lr-Ade">
-                                <rect key="frame" x="250" y="26" width="196" height="16"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                            <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" ambiguous="YES" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="JA2-Lr-Ade">
+                                <rect key="frame" x="243" y="26" width="175" height="16"/>
                                 <textFieldCell key="cell" lineBreakMode="clipping" title="Total ultimos 7 dias: 0 L" id="cVU-i2-YBh">
                                     <font key="font" usesAppearanceFont="YES"/>
                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -813,7 +814,7 @@
                                 </textFieldCell>
                             </textField>
                             <textField focusRingType="none" horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Jst-ll-Kzl">
-                                <rect key="frame" x="252" y="8" width="194" height="16"/>
+                                <rect key="frame" x="245" y="8" width="173" height="16"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                 <textFieldCell key="cell" lineBreakMode="clipping" title="Promedio diario: 0 L" id="jh4-1e-jfj">
                                     <font key="font" metaFont="system"/>
@@ -821,9 +822,29 @@
                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
                             </textField>
+                            <button hidden="YES" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="OBF-hh-eHk">
+                                <rect key="frame" x="431" y="13" width="38" height="24"/>
+                                <buttonCell key="cell" type="push" title="‼️" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="sVr-wz-O3H">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="38" id="EVp-Pk-Gr1"/>
+                                </constraints>
+                                <connections>
+                                    <action selector="mostrarRecomendacion:" target="XfG-lQ-9wD" id="psm-Zp-lev"/>
+                                </connections>
+                            </button>
                         </subviews>
+                        <constraints>
+                            <constraint firstAttribute="trailing" secondItem="OBF-hh-eHk" secondAttribute="trailing" constant="11" id="Ein-9F-eYR"/>
+                            <constraint firstItem="OBF-hh-eHk" firstAttribute="leading" secondItem="JA2-Lr-Ade" secondAttribute="trailing" constant="16" id="TP6-2o-xMS"/>
+                            <constraint firstAttribute="bottom" secondItem="OBF-hh-eHk" secondAttribute="bottom" constant="13" id="eWR-Wz-gCN"/>
+                            <constraint firstItem="OBF-hh-eHk" firstAttribute="top" secondItem="TZE-tY-kYI" secondAttribute="bottom" constant="13" id="hVe-Yd-C1E"/>
+                        </constraints>
                     </view>
                     <connections>
+                        <outlet property="btnRecomendacion" destination="OBF-hh-eHk" id="LK3-gd-jqe"/>
                         <outlet property="chartView" destination="TZE-tY-kYI" id="gae-q0-Sdz"/>
                         <outlet property="datePicker" destination="Th5-E2-Xzp" id="kHH-gt-2NM"/>
                         <outlet property="lblMensaje" destination="43V-JD-0pT" id="o6a-xb-WGe"/>
