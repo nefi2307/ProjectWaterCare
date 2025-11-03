@@ -1,17 +1,13 @@
-// ChartView.m
-
 #import "ChartView.h"
-
-@interface ChartView ()
-@property NSArray<NSString *> *fechas;
-@property NSArray<NSNumber *> *valores;
-@end
 
 @implementation ChartView
 
-- (void)actualizarConFechas:(NSArray<NSString *> *)fechas valores:(NSArray<NSNumber *> *)valores {
+- (void)actualizarConFechas:(NSArray<NSString *> *)fechas
+                    valores:(NSArray<NSNumber *> *)valores
+                 mostrarMes:(BOOL)mes {
     self.fechas = fechas;
     self.valores = valores;
+    self.mostrarMes = mes;
     [self setNeedsDisplay:YES];
 }
 
@@ -21,19 +17,23 @@
     if (self.valores.count == 0) return;
     
     CGFloat ancho = self.bounds.size.width;
-    CGFloat alto = self.bounds.size.height - 30; // margen inferior para etiquetas
-    CGFloat espacio = ancho / self.valores.count; // espacio por barra
+    CGFloat alto = self.bounds.size.height - 30;
+    CGFloat espacio = ancho / self.valores.count;
     
-    // Determinar el valor máximo para escalar las barras
     double max = [[self.valores valueForKeyPath:@"@max.doubleValue"] doubleValue];
     if (max == 0) max = 1;
-    max = ceil(max / 10.0) * 10; // redondear a múltiplos de 10
     
-    // Fondo blanco
+    if (self.mostrarMes) {
+        max = ceil(max / 500.0) * 500.0;
+    } else {
+        max = ceil(max / 10.0) * 10.0;
+    }
+    
+    // Fondo
     [[NSColor whiteColor] setFill];
     NSRectFill(self.bounds);
     
-    // Dibujar líneas horizontales del eje Y con etiquetas
+    // Líneas horizontales y etiquetas
     [[NSColor lightGrayColor] setStroke];
     NSInteger lineas = 5;
     for (NSInteger i = 0; i <= lineas; i++) {
@@ -43,33 +43,40 @@
         [path lineToPoint:NSMakePoint(ancho, y)];
         [path stroke];
         
-        // Etiqueta Y
         NSString *label = [NSString stringWithFormat:@"%.0f", max * i / lineas];
         NSDictionary *attrs = @{NSFontAttributeName:[NSFont systemFontOfSize:8]};
         [label drawAtPoint:NSMakePoint(0, y) withAttributes:attrs];
     }
     
-    // Dibujar barras
-    CGFloat anchoBarra = MIN(30, espacio * 0.6); // ancho máximo 30 px o 60% del espacio
-    CGFloat margenX = (espacio - anchoBarra) / 2.0; // centrar barra
+    CGFloat anchoBarra = MIN(30, espacio * 0.6);
+    CGFloat margenX = (espacio - anchoBarra) / 2.0;
     
     for (NSInteger i = 0; i < self.valores.count; i++) {
         double valor = [self.valores[i] doubleValue];
-        CGFloat altura = (valor / max) * (alto - 20); // altura proporcional
+        if (valor <= 0) continue; // No dibuja barras de 0
+        
+        CGFloat altura = (valor / max) * (alto - 20);
         CGFloat x = i * espacio + margenX;
-        CGFloat y = 30; // desde el eje inferior
+        CGFloat y = 30;
         
-        // Dibujar barra
-        NSRect barra = NSMakeRect(x, y, anchoBarra, altura);
-        [[NSColor systemBlueColor] setFill];
-        NSRectFill(barra);
+        // Color según consumo
+        NSColor *color;
+        if (valor <= 0.8 * self.umbral) {
+            color = [NSColor systemGreenColor];
+        } else if (valor <= self.umbral) {
+            color = [NSColor systemYellowColor];
+        } else {
+            color = [NSColor systemRedColor];
+        }
+        [color setFill];
+        NSRectFill(NSMakeRect(x, y, anchoBarra, altura));
         
-        // Valor encima de la barra
+        // Etiqueta de valor
         NSString *textoValor = [NSString stringWithFormat:@"%.0f", valor];
         NSDictionary *attrsValor = @{NSFontAttributeName:[NSFont systemFontOfSize:9]};
         [textoValor drawAtPoint:NSMakePoint(x, y + altura + 2) withAttributes:attrsValor];
         
-        // Etiqueta abajo (fecha corta MM-dd)
+        // Etiqueta de fecha
         NSString *fecha = self.fechas[i];
         NSString *corta = [fecha substringFromIndex:5];
         NSDictionary *attrsFecha = @{NSFontAttributeName:[NSFont systemFontOfSize:8]};
