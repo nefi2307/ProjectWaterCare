@@ -1,67 +1,79 @@
-//
-//  ChartView.m
-//  ProjectWaterCare
-//
-//  Created by Isaac Burciaga on 31/10/25.
-//
+// ChartView.m
 
 #import "ChartView.h"
 
 @interface ChartView ()
-@property (nonatomic, strong) NSArray<NSString*> *labels;
-@property (nonatomic, strong) NSArray<NSNumber*> *values;
+@property NSArray<NSString *> *fechas;
+@property NSArray<NSNumber *> *valores;
 @end
 
 @implementation ChartView
 
-- (void)setLabels:(NSArray<NSString*> *)labels values:(NSArray<NSNumber*> *)values {
-    self.labels = labels;
-    self.values = values;
+- (void)actualizarConFechas:(NSArray<NSString *> *)fechas valores:(NSArray<NSNumber *> *)valores {
+    self.fechas = fechas;
+    self.valores = valores;
     [self setNeedsDisplay:YES];
 }
-
 
 - (void)drawRect:(NSRect)dirtyRect {
     [super drawRect:dirtyRect];
     
-    if (!self.values || self.values.count == 0) return;
+    if (self.valores.count == 0) return;
     
-    NSGraphicsContext* ctx = [NSGraphicsContext currentContext];
-    CGContextRef gc = (CGContextRef)ctx.graphicsPort;
-    CGFloat w = self.bounds.size.width;
-    CGFloat h = self.bounds.size.height;
-    NSUInteger n = self.values.count;
-    CGFloat margin = 10;
-    CGFloat available = w - 2*margin;
-    CGFloat barWidth = (available / (CGFloat)n) * 0.8;
-    CGFloat gap = (available - n*barWidth) / (n>1 ? (n-1) : 1);
+    CGFloat ancho = self.bounds.size.width;
+    CGFloat alto = self.bounds.size.height - 30; // margen inferior para etiquetas
+    CGFloat espacio = ancho / self.valores.count; // espacio por barra
     
-    // hallar max para escalado
-    double maxV = 0;
-    for (NSNumber *num in self.values) { if ([num doubleValue] > maxV) maxV = [num doubleValue]; }
-    if (maxV == 0) maxV = 1;
+    // Valor máximo fijo para el eje Y: 300 L
+    double max = 300;
     
-    for (NSUInteger i=0; i<n; i++) {
-        double val = [self.values[i] doubleValue];
-        CGFloat barHeight = (val / maxV) * (h - 40);
-        CGFloat x = margin + i*(barWidth + gap);
-        CGFloat y = 20;
-        CGRect barRect = CGRectMake(x, y, barWidth, barHeight);
+    // Fondo blanco
+    [[NSColor whiteColor] setFill];
+    NSRectFill(self.bounds);
+    
+    // Dibujar líneas horizontales del eje Y con etiquetas
+    [[NSColor lightGrayColor] setStroke];
+    NSInteger lineas = 6; // 0, 50, 100, 150, 200, 250, 300
+    for (NSInteger i = 0; i <= lineas; i++) {
+        CGFloat y = 30 + (alto - 20) * i / lineas;
         
-        CGContextSetFillColorWithColor(gc, [[NSColor systemBlueColor] CGColor]);
-        CGContextFillRect(gc, barRect);
+        NSBezierPath *path = [NSBezierPath bezierPath];
+        [path moveToPoint:NSMakePoint(0, y)];
+        [path lineToPoint:NSMakePoint(ancho, y)];
+        [path stroke];
         
-        // Label debajo de la barra
-        NSString *label = (i < self.labels.count) ? self.labels[i] : @"";
-        NSDictionary *attrs = @{ NSFontAttributeName: [NSFont systemFontOfSize:9],
-                                 NSForegroundColorAttributeName: [NSColor labelColor] };
-        CGRect labelRect = CGRectMake(x, 0, barWidth, 16);
-        [label drawInRect:labelRect withAttributes:attrs];
+        // etiqueta Y
+        NSString *label = [NSString stringWithFormat:@"%.0f", max * i / lineas];
+        NSDictionary *attrs = @{NSFontAttributeName:[NSFont systemFontOfSize:8]};
+        [label drawAtPoint:NSMakePoint(0, y) withAttributes:attrs];
     }
     
-    // borde inferior
-    CGContextSetStrokeColorWithColor(gc, [[NSColor lightGrayColor] CGColor]);
-    CGContextStrokeRect(gc, CGRectMake(margin, 20, w-2*margin, h-40));
+    // Dibujar barras
+    CGFloat anchoBarra = MIN(30, espacio * 0.6); // ancho máximo 30 px o 60% del espacio
+    CGFloat margenX = (espacio - anchoBarra) / 2.0; // centrar barra
+    
+    for (NSInteger i = 0; i < self.valores.count; i++) {
+        double valor = [self.valores[i] doubleValue];
+        CGFloat altura = (valor / max) * (alto - 20); // altura proporcional
+        CGFloat x = i * espacio + margenX;
+        CGFloat y = 30; // desde el eje inferior
+        
+        // Dibujar barra
+        NSRect barra = NSMakeRect(x, y, anchoBarra, altura);
+        [[NSColor systemBlueColor] setFill];
+        NSRectFill(barra);
+        
+        // Valor encima de la barra
+        NSString *textoValor = [NSString stringWithFormat:@"%.0f", valor];
+        NSDictionary *attrsValor = @{NSFontAttributeName:[NSFont systemFontOfSize:9]};
+        [textoValor drawAtPoint:NSMakePoint(x, y + altura + 2) withAttributes:attrsValor];
+        
+        // Etiqueta abajo (fecha corta MM-dd)
+        NSString *fecha = self.fechas[i];
+        NSString *corta = [fecha substringFromIndex:5];
+        NSDictionary *attrsFecha = @{NSFontAttributeName:[NSFont systemFontOfSize:8]};
+        [corta drawAtPoint:NSMakePoint(x, 5) withAttributes:attrsFecha];
+    }
 }
 
 @end

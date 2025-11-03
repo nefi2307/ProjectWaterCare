@@ -1,176 +1,140 @@
-//
-//  ViewController.m
-//  ProjectWaterCare
-//
-//  Created by Isaac Burciaga on 31/10/25.
-//
+// ViewController.m
 
 #import "ViewController.h"
 
 @implementation ViewController
 
-#pragma mark - Inicialización
-
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    // Umbral diario: valor configurable; ejemplo: 200 L/día
-    self.umbral = 200.0;
+    // ✅ Inicializamos el diccionario desde UserDefaults
+    NSDictionary *saved = [[NSUserDefaults standardUserDefaults] dictionaryForKey:@"consumoAgua"];
+    self.consumoPorFecha = saved ? [saved mutableCopy] : [NSMutableDictionary dictionary];
     
-    // Cargar valores guardados (NSUserDefaults)
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    NSDictionary *saved = [defaults dictionaryForKey:@"consumoAgua"];
-    if (saved) {
-        // mutable copy para modificar
-        self.consumoPorFecha = [saved mutableCopy];
-    } else {
-        self.consumoPorFecha = [NSMutableDictionary dictionary];
-    }
+    // ✅ Fecha por defecto: hoy
+    [self.datePicker setDateValue:[NSDate date]];
     
-    // Set defaults UI
-    self.datePicker.dateValue = [NSDate date];
-    self.lblMensaje.stringValue = @"Bienvenido. Registra tu consumo.";
-    
-    // Mostrar datos iniciales
-    [self mostrarUltimaSemana];
-    [self actualizarResumenUI];
+    // ✅ Mostrar la gráfica inicial
+    [self actualizarGraficaConUltimosDias:7];
+    [self actualizarResumen];
 }
 
-#pragma mark - Utilidades (formateo de fecha / persistencia)
+#pragma mark - Botones
 
-// Convierte NSDate -> "yyyy-MM-dd" para usar como key en diccionario
-- (NSString*)keyForDate:(NSDate*)date {
-    static NSDateFormatter *df = nil;
-    if (!df) {
-        df = [[NSDateFormatter alloc] init];
-        df.dateFormat = @"yyyy-MM-dd";
-        df.locale = [NSLocale currentLocale];
-    }
-    return [df stringFromDate:date];
-}
-
-// Guarda consumoPorFecha en NSUserDefaults
-- (void)guardarDatos {
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    [defaults setObject:self.consumoPorFecha forKey:@"consumoAgua"];
-    [defaults synchronize];
-}
-
-#pragma mark - Acciones UI
-
-// Registro de consumo para la fecha seleccionada
 - (IBAction)btnRegistrar:(id)sender {
-    // leer litros desde NSTextField (doubleValue)
-    double litros = [self.txtLitros doubleValue];
-    NSDate *fecha = self.datePicker.dateValue;
-    NSString *key = [self keyForDate:fecha];
-    
-    // Validaciones
-    if (litros < 0) {
-        self.lblMensaje.stringValue = @"Error: el valor de litros no puede ser negativo.";
+    double litros = self.txtLitros.doubleValue;
+    if (litros <= 0) {
+        self.lblMensaje.stringValue = @"Ingrese una cantidad válida de litros.";
         return;
     }
-    if (litros == 0) {
-        // Permitimos 0, pero avisamos
-        self.lblMensaje.stringValue = @"Registro: 0 L (puedes eliminar o actualizar si fue un error).";
-    }
     
-    // Guardar en memoria y persistencia
-    self.consumoPorFecha[key] = @(litros);
-    [self guardarDatos];
+    NSString *fechaClave = [self formatearFecha:self.datePicker.dateValue];
     
-    // Mensaje y alerta si supera umbral
-    if (litros > self.umbral) {
-        self.lblMensaje.stringValue = [NSString stringWithFormat:@"Alerta: consumo alto (%.1f L) > umbral (%.1f L). Recomendaciones disponibles.", litros, self.umbral];
-    } else {
-        self.lblMensaje.stringValue = [NSString stringWithFormat:@"Consumo registrado: %.1f L para %@", litros, key];
-    }
+    // Si ya hay consumo en ese día, se puede reemplazar o sumar
+    NSNumber *valorAnterior = self.consumoPorFecha[fechaClave];
+    double nuevoValor = valorAnterior ? valorAnterior.doubleValue + litros : litros;
+    self.consumoPorFecha[fechaClave] = @(nuevoValor);
     
-    // Actualizar UI: resumen y gráfico
-    [self actualizarResumenUI];
-    [self mostrarUltimaSemana];
+    // Guardar en persistencia
+    [[NSUserDefaults standardUserDefaults] setObject:self.consumoPorFecha forKey:@"consumoAgua"];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+    
+    self.lblMensaje.stringValue = [NSString stringWithFormat:@"Registrado %.1f L el %@", litros, fechaClave];
+    
+    // Actualizar gráfica y resumen
+    [self actualizarGraficaConUltimosDias:7];
+    [self actualizarResumen];
 }
 
-// Mostrar consumo de la última semana (7 días)
+
 - (IBAction)btnVerSemana:(id)sender {
-    [self mostrarUltimaSemana];
+    [self actualizarGraficaConUltimosDias:7];
 }
 
-// Mostrar consumo del último mes (30 días)
 - (IBAction)btnVerMes:(id)sender {
-    [self mostrarUltimoMes];
+    [self actualizarGraficaConUltimosDias:30];
 }
 
-// Eliminar todos los datos con confirmación
 - (IBAction)btnLimpiarDatos:(id)sender {
-    NSAlert *alert = [[NSAlert alloc] init];
-    alert.messageText = @"Confirmar eliminación";
-    alert.informativeText = @"¿Desea eliminar todos los registros de consumo? Esta acción no se puede deshacer.";
-    [alert addButtonWithTitle:@"Eliminar"];
-    [alert addButtonWithTitle:@"Cancelar"];
-    NSModalResponse resp = [alert runModal];
-    if (resp == NSAlertFirstButtonReturn) {
-        [self.consumoPorFecha removeAllObjects];
-        [self guardarDatos];
-        self.lblMensaje.stringValue = @"Datos eliminados.";
-        [self actualizarResumenUI];
-        [self mostrarUltimaSemana];
-    }
+    [self.consumoPorFecha removeAllObjects];
+    [[NSUserDefaults standardUserDefaults] removeObjectForKey:@"consumoAgua"];
+    self.lblMensaje.stringValue = @"Datos limpiados.";
+    [self actualizarGraficaConUltimosDias:7];
+    [self actualizarResumen];
 }
 
-#pragma mark - Rango de fechas y preparación de series
+#pragma mark - Lógica
 
-// Devuelve un arreglo de keys (yyyy-MM-dd) para los últimos N días (orden cronológico ascendente)
-- (NSArray<NSString*>*)datesForLastNDays:(NSInteger)days {
-    NSMutableArray *arr = [NSMutableArray arrayWithCapacity:days];
+// ⚙️ Devuelve la fecha normalizada como “yyyy-MM-dd”
+- (NSString *)formatearFecha:(NSDate *)fecha {
+    NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+    formatter.dateFormat = @"yyyy-MM-dd";
+    formatter.locale = [NSLocale localeWithLocaleIdentifier:@"en_US_POSIX"];
+    formatter.timeZone = [NSTimeZone timeZoneForSecondsFromGMT:0];
+    return [formatter stringFromDate:fecha];
+}
+
+// ⚙️ Devuelve un arreglo con los últimos N días (como cadenas “yyyy-MM-dd”)
+- (NSArray<NSString *> *)ultimosDias:(NSInteger)dias {
+    NSMutableArray *fechas = [NSMutableArray array];
+    NSDate *hoy = [NSDate date];
     NSCalendar *cal = [NSCalendar currentCalendar];
-    NSDate *today = [NSDate date];
-    // Construimos el rango desde (today - days + 1) hasta today
-    for (NSInteger i = 0; i < days; i++) {
-        NSDate *d = [cal dateByAddingUnit:NSCalendarUnitDay value:-(days-1-i) toDate:today options:0];
-        [arr addObject:[self keyForDate:d]];
+    
+    for (NSInteger i = dias - 1; i >= 0; i--) {
+        NSDate *fecha = [cal dateByAddingUnit:NSCalendarUnitDay value:-i toDate:hoy options:0];
+        [fechas addObject:[self formatearFecha:fecha]];
     }
-    return arr;
+    return fechas;
 }
 
-// Mostrar última semana (7 días)
-- (void)mostrarUltimaSemana {
-    NSArray *keys = [self datesForLastNDays:7];
-    NSMutableArray<NSNumber*> *values = [NSMutableArray arrayWithCapacity:keys.count];
-    for (NSString *k in keys) {
-        NSNumber *v = self.consumoPorFecha[k];
-        if (v) [values addObject:v]; else [values addObject:@0];
+// ✅ Actualiza la gráfica con los últimos N días
+- (void)actualizarGraficaConUltimosDias:(NSInteger)dias {
+    // Obtener todas las fechas registradas
+    NSArray *todasFechas = [[self.consumoPorFecha allKeys] sortedArrayUsingSelector:@selector(compare:)];
+    
+    NSMutableArray *fechasFiltradas = [NSMutableArray array];
+    NSMutableArray *valoresFiltrados = [NSMutableArray array];
+    
+    NSDateFormatter *df = [[NSDateFormatter alloc] init];
+    df.dateFormat = @"yyyy-MM-dd";
+    
+    NSDate *hoy = [NSDate date];
+    NSCalendar *cal = [NSCalendar currentCalendar];
+    NSDate *limite = [cal dateByAddingUnit:NSCalendarUnitDay value:-dias+1 toDate:hoy options:0];
+    
+    for (NSString *fechaStr in todasFechas) {
+        NSDate *f = [df dateFromString:fechaStr];
+        if (!f) continue;
+        if ([f compare:limite] != NSOrderedAscending) { // f >= limite
+            [fechasFiltradas addObject:fechaStr];
+            [valoresFiltrados addObject:self.consumoPorFecha[fechaStr]];
+        }
     }
-    // Pasar datos a ChartView para dibujar
-    [self.chartView setLabels:keys values:values];
-    [self.chartView setNeedsDisplay:YES];
+    
+    // Si no hay registros en rango, llenar con 0 para mantener gráfico consistente
+    if (fechasFiltradas.count == 0) {
+        for (NSInteger i = 0; i < dias; i++) {
+            NSDate *d = [cal dateByAddingUnit:NSCalendarUnitDay value:-dias+1+i toDate:hoy options:0];
+            [fechasFiltradas addObject:[self formatearFecha:d]];
+            [valoresFiltrados addObject:@0];
+        }
+    }
+    
+    [self.chartView actualizarConFechas:fechasFiltradas valores:valoresFiltrados];
 }
 
-// Mostrar último mes (30 días)
-- (void)mostrarUltimoMes {
-    NSArray *keys = [self datesForLastNDays:30];
-    NSMutableArray<NSNumber*> *values = [NSMutableArray arrayWithCapacity:keys.count];
-    for (NSString *k in keys) {
-        NSNumber *v = self.consumoPorFecha[k];
-        if (v) [values addObject:v]; else [values addObject:@0];
+// ✅ Calcula total y promedio semanal
+- (void)actualizarResumen {
+    // Considerar todas las fechas registradas para calcular promedio/total
+    NSArray *todasFechas = [[self.consumoPorFecha allKeys] sortedArrayUsingSelector:@selector(compare:)];
+    double total = 0;
+    for (NSString *f in todasFechas) {
+        total += [self.consumoPorFecha[f] doubleValue];
     }
-    [self.chartView setLabels:keys values:values];
-    [self.chartView setNeedsDisplay:YES];
-}
-
-#pragma mark - Resumen (total y promedio)
-
-// Calcular y actualizar total y promedio de la última semana
-- (void)actualizarResumenUI {
-    NSArray *keys = [self datesForLastNDays:7];
-    double suma = 0;
-    int diasConDato = 0;
-    for (NSString *k in keys) {
-        NSNumber *v = self.consumoPorFecha[k];
-        if (v) { suma += [v doubleValue]; diasConDato++; }
-    }
-    double promedio = (diasConDato>0) ? (suma / diasConDato) : 0.0;
-    self.lblTotal.stringValue = [NSString stringWithFormat:@"Total últimos %lu días: %.1f L", (unsigned long)keys.count, suma];
+    double promedio = todasFechas.count > 0 ? total / todasFechas.count : 0;
+    
+    self.lblTotal.stringValue = [NSString stringWithFormat:@"Total: %.1f L", total];
     self.lblPromedio.stringValue = [NSString stringWithFormat:@"Promedio diario: %.1f L", promedio];
 }
+
 @end
