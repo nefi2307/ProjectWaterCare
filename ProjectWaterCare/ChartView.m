@@ -24,8 +24,10 @@
     CGFloat alto = self.bounds.size.height - 30; // margen inferior para etiquetas
     CGFloat espacio = ancho / self.valores.count; // espacio por barra
     
-    // Valor máximo fijo para el eje Y: 300 L
-    double max = 300;
+    // Determinar el valor máximo para escalar las barras
+    double max = [[self.valores valueForKeyPath:@"@max.doubleValue"] doubleValue];
+    if (max == 0) max = 1;
+    max = ceil(max / 10.0) * 10; // redondear a múltiplos de 10
     
     // Fondo blanco
     [[NSColor whiteColor] setFill];
@@ -33,16 +35,15 @@
     
     // Dibujar líneas horizontales del eje Y con etiquetas
     [[NSColor lightGrayColor] setStroke];
-    NSInteger lineas = 6; // 0, 50, 100, 150, 200, 250, 300
+    NSInteger lineas = 5;
     for (NSInteger i = 0; i <= lineas; i++) {
         CGFloat y = 30 + (alto - 20) * i / lineas;
-        
         NSBezierPath *path = [NSBezierPath bezierPath];
         [path moveToPoint:NSMakePoint(0, y)];
         [path lineToPoint:NSMakePoint(ancho, y)];
         [path stroke];
         
-        // etiqueta Y
+        // Etiqueta Y
         NSString *label = [NSString stringWithFormat:@"%.0f", max * i / lineas];
         NSDictionary *attrs = @{NSFontAttributeName:[NSFont systemFontOfSize:8]};
         [label drawAtPoint:NSMakePoint(0, y) withAttributes:attrs];

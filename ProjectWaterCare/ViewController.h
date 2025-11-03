@@ -29,6 +29,8 @@
 // --- Lógica y persistencia ---
 @property (nonatomic, strong) NSMutableDictionary<NSString*, NSNumber*> *consumoPorFecha; // key: yyyy-MM-dd -> liters
 @property (nonatomic) double umbral; // umbral diario para alerta
+// Función para actualizar gráfica por mes (publica)
+- (void)actualizarGraficaPorMes;
 
 @end
 
